@@ -1,5 +1,9 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
+import AdminHeader from "@/components/AdminHeader";
+import AdminSidebar from "@/components/AdminSidebar";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import ReactQueryProvider from "@/lib/Providers/ReactQueryProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,7 +15,56 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+      <ReactQueryProvider>
+    {/* <ProtectedRoute> */}
+      <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+        <AdminSidebar />
+        <div className="flex flex-col">
+          <AdminHeader />
+          <main className="flex flex-1 flex-col gap-4 p-4 xl:gap-10 xl:p-10">
+            {children}
+          </main>
+        </div>
+      </div>
+    {/* </ProtectedRoute> */}
+    </ReactQueryProvider>
+      </body>
     </html>
   );
 }
+
+// import { Poppins } from "next/font/google";
+// import "./global.css";
+// import AdminHeader from "@/components/AdminHeader";
+// import AdminSidebar from "@/components/AdminSidebar";
+// import ProtectedRoute from "@/components/ProtectedRoute";
+// import ReactQueryProvider from "@/lib/Providers/ReactQueryProvider";
+
+// const poppins = Poppins({ subsets: ["latin"], weight: ["400"] });
+
+// export const metadata = {
+//   title: "Tarang"
+// };
+
+// export default function RootLayout({ children }) {
+//   return (
+//     <html lang="en">
+//       <body className={poppins.className}>
+    //   <ReactQueryProvider>
+    // <ProtectedRoute>
+    //   <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+    //     <AdminSidebar />
+    //     <div className="flex flex-col">
+    //       <AdminHeader />
+    //       <main className="flex flex-1 flex-col gap-4 p-4 xl:gap-10 xl:p-10">
+    //         {children}
+    //       </main>
+    //     </div>
+    //   </div>
+    // </ProtectedRoute>
+    // </ReactQueryProvider>
+//       </body>
+//     </html>
+//   )
+// }
