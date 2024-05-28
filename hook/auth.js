@@ -3,11 +3,15 @@ import axios from "@/lib/axios";
 import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
+export const useAuth = ({ middleware } = {}) => {
   const router = useRouter();
   const params = useParams();
 
-  const { data: user, error, mutate } = useSWR("/api/user", () =>
+  const {
+    data: user,
+    error,
+    mutate,
+  } = useSWR("/api/user", () =>
     axios
       .get("/api/user")
       .then((res) => res.data)
@@ -37,8 +41,9 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
   const login = async ({ setErrors, setStatus, ...props }) => {
     await csrf();
-    // setErrors([]);
-    // setStatus(null);
+
+    setErrors([]);
+    setStatus(null);
 
     axios
       .post("/login", props)
@@ -46,7 +51,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
       .catch((error) => {
         if (error.response.status !== 422) throw error;
         console.log(error.response);
-        // setErrors(error.response.data.errors);
+        setErrors(error.response.data.errors);
       });
   };
 
@@ -100,9 +105,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
   useEffect(() => {
     if (user && user?.is_admin === 0) router.push("/profile");
-    if (user && user?.is_admin === 1) router.push("/admin");
-    // if (window.location.pathname === "/verify-email" && user?.email_verified_at)
-    //   router.push(redirectIfAuthenticated);
+    if (user && user?.is_admin === 1) router.push("/");
     if (middleware === "auth" && error) logout();
   }, [user, error]);
 

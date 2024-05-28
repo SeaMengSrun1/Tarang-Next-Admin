@@ -1,41 +1,18 @@
-import {
-  QueryClient,
-  HydrationBoundary,
-  dehydrate,
-} from "@tanstack/react-query";
-import { getAllUsers } from "@/services/user";
-import { getAllVenues } from "@/services/venue";
-import { getAllReservations } from "@/services/reservation";
 import StatisticsCard from "@/components/StatisticsCard";
 import DashboardReservationTable from "@/components/DashboardReservationTable";
-import DashboardTeamTable from "@/components/DashboardTeamTable";
+import AdminLayout from "./AdminLayout";
+import Profile from "@/components/Profile";
 
-async function AdminHomePage() {
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery({
-    queryKey: ["allVenues"],
-    queryFn: getAllVenues,
-  });
-  await queryClient.prefetchQuery({
-    queryKey: ["allUsers"],
-    queryFn: getAllUsers,
-  });
-  await queryClient.prefetchQuery({
-    queryKey: ["allReservations"],
-    queryFn: getAllReservations,
-  });
+function AdminHomePage() {
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
+    <AdminLayout>
       <StatisticsCard />
-      <div className="grid gap-4 xl:gap-10 xl:grid-cols-3">
-        <div className="xl:col-span-2">
-          <DashboardReservationTable />
-        </div>
-        {/* <div>
-          <DashboardTeamTable />
-        </div> */}
+      <div className="space-y-4 xl:space-y-10">
+        <DashboardReservationTable />
+        {/* <DashboardTeamTable /> */}
+        <Profile />
       </div>
-    </HydrationBoundary>
+    </AdminLayout>
   );
 }
 
