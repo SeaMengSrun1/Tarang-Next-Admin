@@ -88,8 +88,21 @@ function VenueCreateDialog() {
   };
   const [loading, setLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const isFormValid = () => {
+    for (let field in inputData) {
+      if (inputData[field] === "" || inputData[field].length === 0) {
+        return false;
+      }
+    }
+    return true;
+  };
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (!isFormValid()) {
+      setAlertMessage("Please fill out all fields.");
+      setOpenAlertDialog(true);
+      return;
+    }
     setLoading(true);
     const res = await createVenue(inputData);
     if (res.status === 204) {
@@ -218,7 +231,12 @@ function VenueCreateDialog() {
                   </div>
                   <div className="flex flex-col gap-4">
                     <Label htmlFor="size">Image</Label>
-                    <Input type="file" id="photo" onChange={onChange} />
+                    <Input
+                      type="file"
+                      id="photo"
+                      onChange={onChange}
+                      required
+                    />
                   </div>
                 </div>
                 <DialogFooter>

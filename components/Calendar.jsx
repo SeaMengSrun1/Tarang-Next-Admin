@@ -245,7 +245,7 @@ function Calendar() {
                                 </h1>
                               </div>
                             ) : (
-                              <div className="flex flex-col gap-4 overflow-y-auto h-full">
+                              <div className="flex flex-col gap-6 overflow-y-auto h-full">
                                 {reservations
                                   .filter(
                                     (reservation) =>

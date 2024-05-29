@@ -174,7 +174,7 @@ function ReservationEditDialog({ reservation }) {
                         <ScrollArea className="h-32">
                           <SelectGroup>
                             <SelectLabel>Venue</SelectLabel>
-                            {data.venues.map((venue) => (
+                            {venues.venues.map((venue) => (
                               <SelectItem
                                 key={venue.id}
                                 value={venue.id.toString()}

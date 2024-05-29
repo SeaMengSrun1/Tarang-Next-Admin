@@ -25,7 +25,7 @@ function StatisticsCard() {
     <div className="grid gap-4 xl:gap-10 md:grid-cols-2 xl:grid-cols-4">
       <Card className="bg-white rounded-xl">
         {venuesLoading ? (
-          <div className="h-full flex justify-center items-center">
+          <div className="h-full flex justify-center items-center p-6">
             <Spinner />
           </div>
         ) : (
@@ -44,7 +44,7 @@ function StatisticsCard() {
       </Card>
       <Card className="bg-white rounded-xl">
         {usersLoading ? (
-          <div className="h-full flex justify-center items-center">
+          <div className="h-full flex justify-center items-center p-6">
             <Spinner />
           </div>
         ) : (
@@ -61,7 +61,7 @@ function StatisticsCard() {
       </Card>
       <Card className="bg-white rounded-xl">
         {reservationsLoading ? (
-          <div className="h-full flex justify-center items-center">
+          <div className="h-full flex justify-center items-center p-6">
             <Spinner />
           </div>
         ) : (

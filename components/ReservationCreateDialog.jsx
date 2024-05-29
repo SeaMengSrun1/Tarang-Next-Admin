@@ -97,8 +97,21 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
   const [alertMessage, setAlertMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
+  const isFormValid = () => {
+    for (let field in inputData) {
+      if (inputData[field] === "" || inputData[field] === 0) {
+        return false;
+      }
+    }
+    return true;
+  };
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (!isFormValid()) {
+      setAlertMessage("Please fill out all fields.");
+      setOpenAlertDialog(true);
+      return;
+    }
     setLoading(true);
     // if (teamOptions.find_member || teamOptions.find_team) {
     //   const preRes = await createTeam(teamData);
@@ -173,6 +186,7 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
                           venue_id: id,
                         }));
                       }}
+                      required
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select venue" />
@@ -219,6 +233,7 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
                             start_time: value,
                           }));
                         }}
+                        required
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select start time" />
@@ -259,6 +274,7 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
                             end_time: value,
                           }));
                         }}
+                        required
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select end time" />
@@ -296,6 +312,7 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
                       onChange={onChange}
                       className="rounded-lg"
                       defaultValue={inputData.phone}
+                      required
                     />
                   </div>
                   <div className="flex flex-col gap-2 w-full">
@@ -306,6 +323,7 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
                       onChange={onChange}
                       className="rounded-lg"
                       defaultValue={inputData.attendee}
+                      required
                     />
                   </div>
                   {/*<div className="flex flex-col gap-2">*/}
