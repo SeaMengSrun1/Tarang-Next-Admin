@@ -15,9 +15,9 @@ export const createAmenity = async (amenity) => {
   }
 };
 
-export const editAmenity = async (amenity) => {
+export const editAmenity = async (amenity, updateAmenity) => {
   try {
-    const res = await axios.put(`/api/amenities/${amenity.id}`, amenity, {
+    const res = await axios.put(`/api/amenities/${amenity.id}`, updateAmenity, {
       headers: {
         "content-type": "application/json",
         Accept: "application/json",

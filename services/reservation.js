@@ -81,7 +81,7 @@ export const getAllReservations = async () => {
   }
 };
 
-export const getReservationWithPaginationPage = async (paginationUrl) => {
+export const getReservationWithPagination = async (paginationUrl) => {
   try {
     const res = await axios.get(paginationUrl, {
       headers: {

@@ -1,11 +1,45 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "./ui/button";
+import { ArrowUpRight } from "lucide-react";
 
 function DashboardTeamTable() {
   return (
     <Card className="bg-white rounded-xl">
-      <CardHeader>
-        <CardTitle>Team Matches</CardTitle>
+      <CardHeader className="flex flex-row items-center">
+        <div className="space-y-2">
+          <CardTitle>Match Games</CardTitle>
+          <CardDescription>Recent Match Games at Tarang</CardDescription>
+        </div>
+        {/* <Button
+          asChild
+          size="sm"
+          variant="outline"
+          className="bg-[#2ad5a5] hover:bg-[#9c87f2] text-white hover:text-white ml-auto"
+        >
+          <Link href="/reservation">
+            View All
+            <ArrowUpRight className="h-4 w-4" />
+          </Link>
+        </Button> */}
       </CardHeader>
       <CardContent className="grid gap-8">
         <div className="flex items-center gap-4">
