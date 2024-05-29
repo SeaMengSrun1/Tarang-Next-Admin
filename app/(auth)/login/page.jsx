@@ -104,7 +104,7 @@ function LoginPage() {
                 height={30}
               />
             </a>
-            <a href="http://localhost:8000/auth/google/redirect">
+            <a href="https://api.tarang.site/auth/google/redirect">
               <Image
                 src="/google.png"
                 alt="google_logo"
