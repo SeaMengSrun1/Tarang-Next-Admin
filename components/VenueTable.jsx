@@ -3,7 +3,14 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getVenuesWithPagination } from "@/services/venue";
+import {
+  getVenuesByType,
+  getVenuesByAmenity,
+  getVenuesWithPagination,
+} from "@/services/venue";
+import { getAmenities } from "@/services/amenity";
+import { getSportTypes } from "@/services/sport";
+import { Separator } from "@/components/ui/separator";
 import {
   Card,
   CardContent,
@@ -28,6 +35,13 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Spinner from "./Spinner";
 import VenueCreateDialog from "./VenueCreateDialog";
 import VenueEditDialog from "./VenueEditDialog";
@@ -35,12 +49,36 @@ import VenueDeleteDialog from "./VenueDeleteDialog";
 
 function VenueTable() {
   const [paginationUrl, setPaginationUrl] = useState("/api/venues");
+  const [filter, setFilter] = useState({ type: "all", value: "" });
+
+  const fetchVenues = async () => {
+    switch (filter.type) {
+      case "type":
+        return getVenuesByType(filter.value);
+      case "amenity":
+        return getVenuesByAmenity(filter.value);
+      default:
+        return getVenuesWithPagination(paginationUrl);
+    }
+  };
+  const { data: amenities, isLoading: amenitiesLoading } = useQuery({
+    queryKey: ["allAmenities"],
+    queryFn: getAmenities,
+  });
+  const { data: sportTypes, isLoading: sportTypesLoading } = useQuery({
+    queryKey: ["allSportTypes"],
+    queryFn: getSportTypes,
+  });
   const { data: venues, isLoading } = useQuery({
-    queryKey: ["venues", paginationUrl],
-    queryFn: () => getVenuesWithPagination(paginationUrl),
+    queryKey: ["venues", paginationUrl, filter],
+    queryFn: fetchVenues,
   });
   const handlePaginationChange = (url) => {
     setPaginationUrl(url);
+  };
+
+  const handleFilterChange = (type, value) => {
+    setFilter({ type, value });
   };
   return (
     <Card className="bg-white rounded-xl">
@@ -50,7 +88,57 @@ function VenueTable() {
             <CardTitle>Venues</CardTitle>
             <CardDescription>Manage Venue</CardDescription>
           </div>
-          <VenueCreateDialog />
+          <div className="flex gap-4">
+            <Select onValueChange={(id) => handleFilterChange("type", id)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="View by type" />
+              </SelectTrigger>
+              <SelectContent>
+                {sportTypesLoading ? (
+                  <div className="flex justify-center py-4">
+                    <Spinner />
+                  </div>
+                ) : (
+                  <>
+                    {sportTypes.sport_types.map((sport) => (
+                      <SelectItem
+                        key={sport.id}
+                        id={sport.id}
+                        value={sport.id.toString()}
+                      >
+                        {sport.name}
+                      </SelectItem>
+                    ))}
+                  </>
+                )}
+              </SelectContent>
+            </Select>
+            <Select onValueChange={(id) => handleFilterChange("amenity", id)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="View by amenity" />
+              </SelectTrigger>
+              <SelectContent>
+                {amenitiesLoading ? (
+                  <div className="flex justify-center py-4">
+                    <Spinner />
+                  </div>
+                ) : (
+                  <>
+                    {amenities.amenities.map((amenity) => (
+                      <SelectItem
+                        key={amenity.id}
+                        value={amenity.id.toString()}
+                      >
+                        {amenity.name}
+                      </SelectItem>
+                    ))}
+                  </>
+                )}
+              </SelectContent>
+            </Select>
+            <Separator orientation="vertical" />
+            <VenueCreateDialog />
+          </div>
         </div>
       </CardHeader>
       {isLoading ? (
@@ -60,7 +148,7 @@ function VenueTable() {
       ) : (
         <>
           <CardContent>
-            {venues.data.data.venues.length === 0 ? (
+            {venues.data.venues.length === 0 ? (
               <div className="flex justify-center items-center gap-4">
                 <Image
                   src="/favicon.ico"
@@ -85,7 +173,7 @@ function VenueTable() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {venues.data.data.venues.map((venue, index) => (
+                  {venues.data.venues.map((venue, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium">{venue.id}</TableCell>
                       <TableCell className="hidden sm:table-cell">
@@ -121,7 +209,7 @@ function VenueTable() {
             <div>
               <Pagination>
                 <PaginationContent>
-                  {venues.data.meta.links.map((link, index) => (
+                  {venues.meta.links.map((link, index) => (
                     <div key={index}>
                       {link.label === "&laquo; Previous" && (
                         <PaginationItem>
