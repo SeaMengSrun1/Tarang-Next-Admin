@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getAllVenues } from "@/services/venue";
 import { createReservation } from "@/services/reservation";
+import { checkAvailableTime } from "@/services/reservation";
 import {
   Dialog,
   DialogContent,
@@ -60,11 +61,6 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
     find_team: false,
     find_member: false,
   });
-  // const [teamData, setTeamData] = useState({
-  //   name: "",
-  //   logo: "",
-  //   sport_type_id: venue ? venue.sportTypes.id : 0,
-  // });
   const onChange = (e) => {
     e.preventDefault();
     setInputData((prevState) => ({
@@ -72,34 +68,48 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
       [e.target.id]: e.target.value,
     }));
   };
-  // const handleCheck = (e) => {
-  //   e.preventDefault();
-  //   setTeamOptions({
-  //     ...teamOptions,
-  //     [e.target.value]: e.target.checked,
-  //   });
-  // };
-  // const onChangeTeam = (e) => {
-  //   e.preventDefault();
-  //   if (e.target.id === "logo") {
-  //     setTeamData((prevState) => ({
-  //       ...prevState,
-  //       [e.target.id]: e.target.files[0],
-  //     }));
-  //   } else {
-  //     setTeamData((prevState) => ({
-  //       ...prevState,
-  //       [e.target.id]: e.target.value,
-  //     }));
-  //   }
-  // };
   const [loading, setLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [checkTimeMessage, setCheckTimeMessage] = useState("");
+  const [checkDateMessage, setCheckDateMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
+  useEffect(() => {
+    setCheckTimeMessage("");
+    setCheckDateMessage("");
+    const checkTime = async () => {
+      const response = await checkAvailableTime({
+        date: inputData.date,
+        start_time: inputData.start_time,
+        end_time: inputData.end_time,
+        venue_id: parseInt(inputData.venue_id),
+      });
+      if (response.status !== 422) {
+        if (!response.data.is_founded) {
+          setCheckTimeMessage("Time already reserved");
+        }
+      }
+    };
+    checkTime();
+    if (new Date(inputData.date) < new Date().setHours(0, 0, 0, 0)) {
+      setCheckDateMessage("You can't choose a date before today");
+    }
+    if (
+      new Date(`2000-01-01T${inputData.start_time}`) >=
+      new Date(`2000-01-01T${inputData.end_time}`)
+    ) {
+      setCheckTimeMessage("End time must be after start time.");
+      return;
+    }
+  }, [
+    inputData.start_time,
+    inputData.end_time,
+    inputData.date,
+    inputData.venue_id,
+  ]);
   const isFormValid = () => {
     for (let field in inputData) {
-      if (inputData[field] === "" || inputData[field] === 0) {
+      if (inputData[field] === "") {
         return false;
       }
     }
@@ -113,26 +123,8 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
       return;
     }
     setLoading(true);
-    // if (teamOptions.find_member || teamOptions.find_team) {
-    //   const preRes = await createTeam(teamData);
-    //   inputData.team_id = preRes.data.id;
-    //   const reservation = { ...inputData, ...teamOptions };
-    //   const res = await createReservation(reservation);
-    //   if (res.status === 204) {
-    //     setOpenAlertDialog(true);
-    //     setAlertMessage("Reservation Create Successfully");
-    //     wait().then(() => setOpenAlertDialog(false));
-    //   } else {
-    //     setOpenAlertDialog(true);
-    //     setAlertMessage("Reservation Create Failed");
-    //     wait().then(() => setOpenAlertDialog(false));
-    //   }
-    //   setOpen(false);
-    //   setLoading(false);
-    //   return;
-    // }
     const res = await createReservation({ ...inputData, ...teamOptions });
-    if (res.status === 204) {
+    if (res.status < 400) {
       setOpenAlertDialog(true);
       setAlertMessage("Reservation Create Successfully");
       wait().then(() => setOpenAlertDialog(false));
@@ -208,101 +200,107 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <Label htmlFor="name">Date</Label>
-                    <DatePicker
-                      onValue={inputData.date}
-                      onDateChange={(date) => {
-                        setInputData((prevState) => ({
-                          ...prevState,
-                          date: date.toISOString(),
-                        }));
-                      }}
-                    />
+                  <div>
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor="name">Date</Label>
+                      <DatePicker
+                        onValue={inputData.date}
+                        onDateChange={(date) => {
+                          setInputData((prevState) => ({
+                            ...prevState,
+                            date: date.toISOString(),
+                          }));
+                        }}
+                      />
+                    </div>
+                    <p className="text-sm text-gray-400">{checkDateMessage}</p>
                   </div>
-                  <div className="flex gap-4">
-                    <div className="flex flex-col gap-2 w-full">
-                      <Label htmlFor="name">Start Time</Label>
-                      <Select
-                        defaultValue={inputData.start_time
-                          .replace(" AM", "")
-                          .replace(" PM", "")}
-                        onValueChange={(value) => {
-                          setInputData((prevState) => ({
-                            ...prevState,
-                            start_time: value,
-                          }));
-                        }}
-                        required
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select start time" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white">
-                          <ScrollArea className="h-32">
-                            <SelectGroup>
-                              <SelectItem value="07:00">7:00 AM</SelectItem>
-                              <SelectItem value="08:00">8:00 AM</SelectItem>
-                              <SelectItem value="09:00">9:00 AM</SelectItem>
-                              <SelectItem value="10:00">10:00 AM</SelectItem>
-                              <SelectItem value="11:00">11:00 AM</SelectItem>
-                              <SelectItem value="12:00">12:00 AM</SelectItem>
-                              <SelectItem value="13:00">13:00 PM</SelectItem>
-                              <SelectItem value="14:00">14:00 PM</SelectItem>
-                              <SelectItem value="15:00">15:00 PM</SelectItem>
-                              <SelectItem value="16:00">16:00 PM</SelectItem>
-                              <SelectItem value="17:00">17:00 PM</SelectItem>
-                              <SelectItem value="18:00">18:00 PM</SelectItem>
-                              <SelectItem value="19:00">19:00 PM</SelectItem>
-                              <SelectItem value="20:00">20:00 PM</SelectItem>
-                              <SelectItem value="21:00">21:00 PM</SelectItem>
-                              <SelectItem value="22:00">22:00 PM</SelectItem>
-                            </SelectGroup>
-                          </ScrollArea>
-                        </SelectContent>
-                      </Select>
+                  <div className="flex flex-col">
+                    <div className="flex gap-4">
+                      <div className="flex flex-col gap-2 w-full">
+                        <Label htmlFor="name">Start Time</Label>
+                        <Select
+                          defaultValue={inputData.start_time
+                            .replace(" AM", "")
+                            .replace(" PM", "")}
+                          onValueChange={(value) => {
+                            setInputData((prevState) => ({
+                              ...prevState,
+                              start_time: value,
+                            }));
+                          }}
+                          required
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select start time" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white">
+                            <ScrollArea className="h-32">
+                              <SelectGroup>
+                                <SelectItem value="07:00">7:00 AM</SelectItem>
+                                <SelectItem value="08:00">8:00 AM</SelectItem>
+                                <SelectItem value="09:00">9:00 AM</SelectItem>
+                                <SelectItem value="10:00">10:00 AM</SelectItem>
+                                <SelectItem value="11:00">11:00 AM</SelectItem>
+                                <SelectItem value="12:00">12:00 AM</SelectItem>
+                                <SelectItem value="13:00">13:00 PM</SelectItem>
+                                <SelectItem value="14:00">14:00 PM</SelectItem>
+                                <SelectItem value="15:00">15:00 PM</SelectItem>
+                                <SelectItem value="16:00">16:00 PM</SelectItem>
+                                <SelectItem value="17:00">17:00 PM</SelectItem>
+                                <SelectItem value="18:00">18:00 PM</SelectItem>
+                                <SelectItem value="19:00">19:00 PM</SelectItem>
+                                <SelectItem value="20:00">20:00 PM</SelectItem>
+                                <SelectItem value="21:00">21:00 PM</SelectItem>
+                                <SelectItem value="22:00">22:00 PM</SelectItem>
+                              </SelectGroup>
+                            </ScrollArea>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex flex-col gap-2 w-full">
+                        <Label htmlFor="name">End Time</Label>
+                        <Select
+                          defaultValue={inputData.end_time
+                            .replace(" AM", "")
+                            .replace(" PM", "")}
+                          onValueChange={(value) => {
+                            setInputData((prevState) => ({
+                              ...prevState,
+                              end_time: value,
+                            }));
+                          }}
+                          required
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select end time" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white">
+                            <ScrollArea className="h-32">
+                              <SelectGroup>
+                                <SelectItem value="07:00">7:00 AM</SelectItem>
+                                <SelectItem value="08:00">8:00 AM</SelectItem>
+                                <SelectItem value="09:00">9:00 AM</SelectItem>
+                                <SelectItem value="10:00">10:00 AM</SelectItem>
+                                <SelectItem value="11:00">11:00 AM</SelectItem>
+                                <SelectItem value="12:00">12:00 AM</SelectItem>
+                                <SelectItem value="13:00">13:00 PM</SelectItem>
+                                <SelectItem value="14:00">14:00 PM</SelectItem>
+                                <SelectItem value="15:00">15:00 PM</SelectItem>
+                                <SelectItem value="16:00">16:00 PM</SelectItem>
+                                <SelectItem value="17:00">17:00 PM</SelectItem>
+                                <SelectItem value="18:00">18:00 PM</SelectItem>
+                                <SelectItem value="19:00">19:00 PM</SelectItem>
+                                <SelectItem value="20:00">20:00 PM</SelectItem>
+                                <SelectItem value="21:00">21:00 PM</SelectItem>
+                                <SelectItem value="22:00">22:00 PM</SelectItem>
+                              </SelectGroup>
+                            </ScrollArea>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
-                    <div className="flex flex-col gap-2 w-full">
-                      <Label htmlFor="name">End Time</Label>
-                      <Select
-                        defaultValue={inputData.end_time
-                          .replace(" AM", "")
-                          .replace(" PM", "")}
-                        onValueChange={(value) => {
-                          setInputData((prevState) => ({
-                            ...prevState,
-                            end_time: value,
-                          }));
-                        }}
-                        required
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select end time" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white">
-                          <ScrollArea className="h-32">
-                            <SelectGroup>
-                              <SelectItem value="07:00">7:00 AM</SelectItem>
-                              <SelectItem value="08:00">8:00 AM</SelectItem>
-                              <SelectItem value="09:00">9:00 AM</SelectItem>
-                              <SelectItem value="10:00">10:00 AM</SelectItem>
-                              <SelectItem value="11:00">11:00 AM</SelectItem>
-                              <SelectItem value="12:00">12:00 AM</SelectItem>
-                              <SelectItem value="13:00">13:00 PM</SelectItem>
-                              <SelectItem value="14:00">14:00 PM</SelectItem>
-                              <SelectItem value="15:00">15:00 PM</SelectItem>
-                              <SelectItem value="16:00">16:00 PM</SelectItem>
-                              <SelectItem value="17:00">17:00 PM</SelectItem>
-                              <SelectItem value="18:00">18:00 PM</SelectItem>
-                              <SelectItem value="19:00">19:00 PM</SelectItem>
-                              <SelectItem value="20:00">20:00 PM</SelectItem>
-                              <SelectItem value="21:00">21:00 PM</SelectItem>
-                              <SelectItem value="22:00">22:00 PM</SelectItem>
-                            </SelectGroup>
-                          </ScrollArea>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    <p className="text-sm text-gray-400">{checkTimeMessage}</p>
                   </div>
                   <div className="flex flex-col gap-2 w-full">
                     <Label htmlFor="phone_number">Phone Number</Label>
@@ -323,59 +321,14 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
                       onChange={onChange}
                       className="rounded-lg"
                       defaultValue={inputData.attendee}
-                      required
                     />
                   </div>
-                  {/*<div className="flex flex-col gap-2">*/}
-                  {/*  <Label htmlFor="name">Optional</Label>*/}
-                  {/*  <div className="flex flex-col md:flex-row gap-4 text-sm">*/}
-                  {/*    <div className="flex items-center gap-2">*/}
-                  {/*      <input*/}
-                  {/*        onChange={handleCheck}*/}
-                  {/*        checked={teamOptions.find_team}*/}
-                  {/*        type="checkbox"*/}
-                  {/*        value="find_team"*/}
-                  {/*        id="find_team"*/}
-                  {/*        name="default-checkbox"*/}
-                  {/*      />*/}
-                  {/*      <label htmlFor="find_team">*/}
-                  {/*        Find a team to play against*/}
-                  {/*      </label>*/}
-                  {/*    </div>*/}
-                  {/*    <div className="flex gap-2">*/}
-                  {/*      <input*/}
-                  {/*        onChange={handleCheck}*/}
-                  {/*        checked={teamOptions.find_member}*/}
-                  {/*        type="checkbox"*/}
-                  {/*        value="find_member"*/}
-                  {/*        id="find_member"*/}
-                  {/*        name="default-checkbox"*/}
-                  {/*      />*/}
-                  {/*      <label htmlFor="find_member">Find team member</label>*/}
-                  {/*    </div>*/}
-                  {/*  </div>*/}
-                  {/*</div>*/}
-                  {/*{(teamOptions.find_member === true ||*/}
-                  {/*  teamOptions.find_team === true) && (*/}
-                  {/*  <>*/}
-                  {/*    <div className="flex flex-col gap-2">*/}
-                  {/*      <Label htmlFor="name">Team Name</Label>*/}
-                  {/*      <Input*/}
-                  {/*        type="data"*/}
-                  {/*        id="name"*/}
-                  {/*        className="rounded-lg"*/}
-                  {/*        onChange={onChangeTeam}*/}
-                  {/*      />*/}
-                  {/*    </div>*/}
-                  {/*    <div className="flex flex-col gap-4">*/}
-                  {/*      <Label htmlFor="size">Image</Label>*/}
-                  {/*      <Input type="file" id="logo" onChange={onChangeTeam} />*/}
-                  {/*    </div>*/}
-                  {/*  </>*/}
-                  {/*)}*/}
                 </div>
                 <DialogFooter>
                   <Button
+                    disabled={
+                      checkTimeMessage !== "" || checkDateMessage !== ""
+                    }
                     type="submit"
                     variant="outline"
                     className="bg-[#2ad5a5] hover:bg-[#9c87f2] text-white hover:text-white"

@@ -125,3 +125,18 @@ export const searchAvailableTime = async (data) => {
     return e.response;
   }
 };
+
+export const checkAvailableTime = async (data) => {
+  try {
+    const res = await axios.post("/api/find-reservation", data, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    return res;
+  } catch (e) {
+    console.log(e.response);
+    return e.response;
+  }
+};
