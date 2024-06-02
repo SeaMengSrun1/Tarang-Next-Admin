@@ -96,7 +96,7 @@ function ReservationTable() {
                       </TableCell>
                       <TableCell className="hidden sm:table-cell">
                         <Badge variant="outline">
-                          {reservation.venue.sportTypes.name}
+                          {reservation.venue.sport_type.name}
                         </Badge>
                       </TableCell>
                       <TableCell className="hidden md:table-cell">

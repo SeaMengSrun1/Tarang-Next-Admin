@@ -23,13 +23,13 @@ function AdminSidebar() {
           </Link>
         </div>
         <div className="flex-1">
-          <nav className="grid items-start px-2 text-lg font-medium lg:px-4 gap-2">
+          <nav className="grid items-start px-2 text-lg font-medium lg:px-4">
             <Link
               href="/"
               className={
                 pathName === "/"
-                  ? "bg-[#f5f5f5] flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                  : "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-[#f5f5f5]"
+                  ? "bg-[#f5f5f5] flex items-center gap-3 rounded-lg px-3 py-2"
+                  : "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-400 transition-all hover:text-black"
               }
             >
               <LayoutDashboard className="h-4 w-4" />
@@ -39,8 +39,8 @@ function AdminSidebar() {
               href="/venue"
               className={
                 pathName === "/venue"
-                  ? "bg-[#f5f5f5] flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                  : "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-[#f5f5f5]"
+                  ? "bg-[#f5f5f5] flex items-center gap-3 rounded-lg px-3 py-2"
+                  : "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-400 transition-all hover:text-black"
               }
             >
               <LandPlot className="h-4 w-4" />
@@ -50,8 +50,8 @@ function AdminSidebar() {
               href="/reservation"
               className={
                 pathName === "/reservation"
-                  ? "bg-[#f5f5f5] flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                  : "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-[#f5f5f5]"
+                  ? "bg-[#f5f5f5] flex items-center gap-3 rounded-lg px-3 py-2"
+                  : "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-400 transition-all hover:text-black"
               }
             >
               <Bookmark className="h-4 w-4" />
@@ -61,8 +61,8 @@ function AdminSidebar() {
               href="/team"
               className={
                 pathName === "/team"
-                  ? "bg-[#f5f5f5] flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                  : "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-[#f5f5f5]"
+                  ? "bg-[#f5f5f5] flex items-center gap-3 rounded-lg px-3 py-2"
+                  : "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-400 transition-all hover:text-black"
               }
             >
               <Users className="h-4 w-4" />
@@ -72,8 +72,8 @@ function AdminSidebar() {
               href="/user"
               className={
                 pathName === "/user"
-                  ? "bg-[#f5f5f5] flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                  : "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-[#f5f5f5]"
+                  ? "bg-[#f5f5f5] flex items-center gap-3 rounded-lg px-3 py-2"
+                  : "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-400 transition-all hover:text-black"
               }
             >
               <User className="h-4 w-4" />
@@ -83,8 +83,8 @@ function AdminSidebar() {
               href="/setting"
               className={
                 pathName === "/setting"
-                  ? "bg-[#f5f5f5] flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                  : "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-[#f5f5f5]"
+                  ? "bg-[#f5f5f5] flex items-center gap-3 rounded-lg px-3 py-2"
+                  : "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-400 transition-all hover:text-black"
               }
             >
               <Settings className="h-4 w-4" />

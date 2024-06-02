@@ -188,7 +188,7 @@ function VenueTable() {
                       <TableCell className="font-medium">
                         {venue.name}
                       </TableCell>
-                      <TableCell>{venue.sportTypes.name}</TableCell>
+                      <TableCell>{venue.sport_type.name}</TableCell>
                       <TableCell className="hidden md:table-cell">
                         {venue.size}
                       </TableCell>

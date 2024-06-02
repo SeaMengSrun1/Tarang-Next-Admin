@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/select";
 import {
   AlertDialog,
-  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
@@ -40,11 +40,17 @@ import Spinner from "@/components/Spinner";
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 5000));
 
-function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
-  const { data: venues, isLoading: venuesLoading } = useQuery({
-    queryKey: ["allVenues"],
-    queryFn: getAllVenues,
-  });
+function ReservationCreateDialog({
+  isUser,
+  venue,
+  venues,
+  triggerContent,
+  date,
+}) {
+  // const { data: venues, isLoading: venuesLoading } = useQuery({
+  //   queryKey: ["allVenues"],
+  //   queryFn: getAllVenues,
+  // });
   const [inputData, setInputData] = useState({
     phone: "",
     attendee: 0,
@@ -74,39 +80,42 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
   const [checkDateMessage, setCheckDateMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
-  useEffect(() => {
-    setCheckTimeMessage("");
-    setCheckDateMessage("");
-    const checkTime = async () => {
-      const response = await checkAvailableTime({
-        date: inputData.date,
-        start_time: inputData.start_time,
-        end_time: inputData.end_time,
-        venue_id: parseInt(inputData.venue_id),
-      });
-      if (response.status !== 422) {
-        if (!response.data.is_founded) {
-          setCheckTimeMessage("Time already reserved");
-        }
-      }
-    };
-    checkTime();
-    if (new Date(inputData.date) < new Date().setHours(0, 0, 0, 0)) {
-      setCheckDateMessage("You can't choose a date before today");
-    }
-    if (
-      new Date(`2000-01-01T${inputData.start_time}`) >=
-      new Date(`2000-01-01T${inputData.end_time}`)
-    ) {
-      setCheckTimeMessage("End time must be after start time.");
-      return;
-    }
-  }, [
-    inputData.start_time,
-    inputData.end_time,
-    inputData.date,
-    inputData.venue_id,
-  ]);
+  // useEffect(
+  //   () => {
+  //     setCheckTimeMessage("");
+  //     setCheckDateMessage("");
+  //     if (new Date(inputData.date) < new Date().setHours(0, 0, 0, 0)) {
+  //       setCheckDateMessage("You can't choose a date before today");
+  //     }
+  //     if (
+  //       new Date(`2000-01-01T${inputData.start_time}`) >=
+  //       new Date(`2000-01-01T${inputData.end_time}`)
+  //     ) {
+  //       setCheckTimeMessage("End time must be after start time.");
+  //       return;
+  //     }
+  //     const checkTime = async () => {
+  //       const response = await checkAvailableTime({
+  //         date: inputData.date,
+  //         start_time: inputData.start_time,
+  //         end_time: inputData.end_time,
+  //         venue_id: parseInt(inputData?.venue_id),
+  //       });
+  //       if (response.status !== 422) {
+  //         if (!response.data.is_founded) {
+  //           setCheckTimeMessage("Time already reserved");
+  //         }
+  //       }
+  //     };
+  //     checkTime();
+  //   },
+  //   [
+  //     // inputData.start_time,
+  //     // inputData.end_time,
+  //     // inputData.date,
+  //     // inputData.venue_id,
+  //   ]
+  // );
   const isFormValid = () => {
     for (let field in inputData) {
       if (inputData[field] === "") {
@@ -145,7 +154,11 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
             <AlertDialogTitle>{alertMessage}</AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction>Ok</AlertDialogAction>
+            <AlertDialogCancel asChild>
+              <Button className="bg-[#2ad5a5] text-white" variant="outline">
+                Ok
+              </Button>
+            </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -154,7 +167,7 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
         <DialogTrigger asChild>{triggerContent}</DialogTrigger>
         <DialogContent className="bg-white">
           <form onSubmit={onSubmit}>
-            {loading || venuesLoading ? (
+            {loading ? (
               <div className="flex justify-center p-10">
                 <Spinner />
               </div>
@@ -192,7 +205,7 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
                                 key={venue.id}
                                 value={venue.id.toString()}
                               >
-                                {venue.name} - {venue.sportTypes.name}
+                                {venue.name} - {venue.sport_type.name}
                               </SelectItem>
                             ))}
                           </SelectGroup>
@@ -213,7 +226,9 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
                         }}
                       />
                     </div>
-                    <p className="text-sm text-gray-400">{checkDateMessage}</p>
+                    <p className="text-sm text-gray-400 mt-2">
+                      {checkDateMessage}
+                    </p>
                   </div>
                   <div className="flex flex-col">
                     <div className="flex gap-4">
@@ -300,7 +315,9 @@ function ReservationCreateDialog({ isUser, venue, triggerContent, date }) {
                         </Select>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-400">{checkTimeMessage}</p>
+                    <p className="text-sm text-gray-400 mt-2">
+                      {checkTimeMessage}
+                    </p>
                   </div>
                   <div className="flex flex-col gap-2 w-full">
                     <Label htmlFor="phone_number">Phone Number</Label>

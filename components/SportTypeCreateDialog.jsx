@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
+  AlertDialogCancel,
   AlertDialogAction,
   AlertDialogContent,
   AlertDialogFooter,
@@ -43,6 +44,12 @@ function SportTypeCreateDialog() {
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (inputData.name === "") {
+      setOpenAlertDialog(true);
+      setAlertMessage("Sport Type name is required");
+      wait().then(() => setOpenAlertDialog(false));
+      return;
+    }
     setLoading(true);
     const res = await createSport(inputData);
     if (res.status === 204) {
@@ -65,7 +72,11 @@ function SportTypeCreateDialog() {
             <AlertDialogTitle>{alertMessage}</AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction>Ok</AlertDialogAction>
+            <AlertDialogCancel asChild>
+              <Button className="bg-[#2ad5a5] text-white" variant="outline">
+                Ok
+              </Button>
+            </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

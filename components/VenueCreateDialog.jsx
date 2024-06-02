@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/select";
 import {
   AlertDialog,
-  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
@@ -127,7 +127,11 @@ function VenueCreateDialog() {
             <AlertDialogTitle>{alertMessage}</AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction>Ok</AlertDialogAction>
+            <AlertDialogCancel asChild>
+              <Button className="bg-[#2ad5a5] text-white" variant="outline">
+                Ok
+              </Button>
+            </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

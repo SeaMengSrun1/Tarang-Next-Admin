@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/select";
 import {
   AlertDialog,
-  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
@@ -54,12 +54,11 @@ function VenueEditDialog({ venue }) {
   const [updateData, setUpdateData] = useState({
     name: venue ? venue.name : "",
     size: venue ? venue.size : 0,
-    sport_type_id: venue ? venue.sportTypes.id : 0,
+    sport_type_id: venue ? venue.sport_type.id : 0,
     description: venue ? venue.description : "",
     amenity_id: venue ? venueAmenitiesIds : [],
     photo: venue ? venue.photo : "",
   });
-  console.log(updateData);
   const onChange = (e) => {
     e.preventDefault();
     if (e.target.id === "photo") {
@@ -100,7 +99,7 @@ function VenueEditDialog({ venue }) {
     if (
       updateData.name === venue.name &&
       updateData.size === venue.size &&
-      updateData.sport_type_id === venue.sportTypes.id &&
+      updateData.sport_type_id === venue.sport_type.id &&
       updateData.description === venue.description &&
       JSON.stringify(updateData.amenity_id) ===
         JSON.stringify(venueAmenitiesIds)
@@ -132,7 +131,11 @@ function VenueEditDialog({ venue }) {
             <AlertDialogTitle>{alertMessage}</AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction>Ok</AlertDialogAction>
+            <AlertDialogCancel asChild>
+              <Button className="bg-[#2ad5a5] text-white" variant="outline">
+                Ok
+              </Button>
+            </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
