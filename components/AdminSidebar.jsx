@@ -10,6 +10,7 @@ import {
   User,
   LandPlot,
   Settings,
+  ClipboardList,
 } from "lucide-react";
 
 function AdminSidebar() {
@@ -58,17 +59,6 @@ function AdminSidebar() {
               Reservation
             </Link>
             <Link
-              href="/team"
-              className={
-                pathName === "/team"
-                  ? "bg-[#f5f5f5] flex items-center gap-3 rounded-lg px-3 py-2"
-                  : "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-400 transition-all hover:text-black"
-              }
-            >
-              <Users className="h-4 w-4" />
-              Team
-            </Link>
-            <Link
               href="/user"
               className={
                 pathName === "/user"
@@ -79,6 +69,17 @@ function AdminSidebar() {
               <User className="h-4 w-4" />
               User
             </Link>
+            {/* <Link
+              href="/report"
+              className={
+                pathName === "/report"
+                  ? "bg-[#f5f5f5] flex items-center gap-3 rounded-lg px-3 py-2"
+                  : "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-400 transition-all hover:text-black"
+              }
+            >
+              <ClipboardList className="h-4 w-4" />
+              Report
+            </Link> */}
             <Link
               href="/setting"
               className={

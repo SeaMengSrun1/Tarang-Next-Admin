@@ -14,7 +14,7 @@ function ProtectedRoute({ children }) {
   const router = useRouter();
 
   useEffect(() => {
-    if (data?.status === 401 || data?.data.is_admin === 0) {
+    if (data?.status === 401 || data?.data.is_admin === false) {
       router.push("/login");
     }
   }, [data, router]);

@@ -75,11 +75,12 @@ function VenueTable() {
   });
   const handlePaginationChange = (url) => {
     setPaginationUrl(url);
+    setFilter({ type: "all", value: "" });
   };
-
   const handleFilterChange = (type, value) => {
     setFilter({ type, value });
   };
+
   return (
     <Card className="bg-white rounded-xl">
       <CardHeader className="flex justify-between">

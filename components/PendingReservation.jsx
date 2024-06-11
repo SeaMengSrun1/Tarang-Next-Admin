@@ -1,24 +1,9 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  getReservationWithPagination,
-  getReservationByType,
-  getReservationByDate,
-} from "@/services/reservation";
-import { getSportTypes } from "@/services/sport";
-import { format } from "date-fns";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -28,6 +13,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   Pagination,
   PaginationContent,
   PaginationItem,
@@ -35,100 +27,42 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import DatePicker from "./DatePicker";
-import ReservationEditDialog from "./ReservationEditDialog";
-import ReservationDeleteDialog from "./ReservationDeleteDialog";
-import Spinner from "./Spinner";
+import { Button } from "@/components/ui/button";
+import { ArrowUpRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { getPendingReservation } from "@/services/report";
+import { format } from "date-fns";
+import Spinner from "@/components/Spinner";
 
-function ReservationTable() {
-  const [paginationUrl, setPaginationUrl] = useState("/api/reservation");
-  const [filter, setFilter] = useState({ type: "all", value: "" });
-
-  const fetchVenues = async () => {
-    switch (filter.type) {
-      case "type":
-        return getReservationByType(filter.value);
-      case "date":
-        return getReservationByDate(
-          new Date(
-            new Date(filter.value).getTime() -
-              new Date(filter.value).getTimezoneOffset() * 60000
-          ).toISOString()
-        );
-      default:
-        return getReservationWithPagination(paginationUrl);
-    }
-  };
-  const { data: reservations, isLoading } = useQuery({
-    queryKey: ["reservations", paginationUrl, filter],
-    queryFn: fetchVenues,
-  });
-  console.log(reservations);
-  const { data: sportTypes, isLoading: sportTypesLoading } = useQuery({
-    queryKey: ["allSportTypes"],
-    queryFn: getSportTypes,
+function PendingReservation() {
+  const [paginationUrl, setPaginationUrl] = useState(
+    "/api/reservation/pending"
+  );
+  const {
+    data: pendingReservationReport,
+    isLoading: pendingReservationLoading,
+  } = useQuery({
+    queryKey: ["pendingReservation", paginationUrl],
+    queryFn: () => getPendingReservation(paginationUrl),
   });
   const handlePaginationChange = (url) => {
     setPaginationUrl(url);
-    setFilter({ type: "all", value: "" });
   };
-  const handleFilterChange = (type, value) => {
-    setFilter({ type, value });
-  };
+  console.log(pendingReservationReport);
   return (
     <Card className="bg-white rounded-xl">
       <CardHeader>
-        <div className="flex justify-between">
-          <div>
-            <CardTitle>Reservations</CardTitle>
-            <CardDescription>Manage your Reservations.</CardDescription>
-          </div>
-          <div className="flex gap-4">
-            <Select onValueChange={(id) => handleFilterChange("type", id)}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="View by type" />
-              </SelectTrigger>
-              <SelectContent>
-                {sportTypesLoading ? (
-                  <div className="flex justify-center py-4">
-                    <Spinner />
-                  </div>
-                ) : (
-                  <>
-                    {sportTypes.sport_types.map((sport) => (
-                      <SelectItem
-                        key={sport.id}
-                        id={sport.id}
-                        value={sport.id.toString()}
-                      >
-                        {sport.name}
-                      </SelectItem>
-                    ))}
-                  </>
-                )}
-              </SelectContent>
-            </Select>
-            <DatePicker
-              onDateChange={(date) => handleFilterChange("date", date)}
-            />
-          </div>
-        </div>
+        <CardTitle>Pending Reservations</CardTitle>
+        <CardDescription>Upcoming Reservations For Tarang.</CardDescription>
       </CardHeader>
-      {isLoading ? (
+      {/* {pendingReservationLoading ? (
         <div className="flex justify-center items-center mb-6">
           <Spinner />
         </div>
       ) : (
         <>
           <CardContent>
-            {reservations.data.length === 0 ? (
+            {pendingReservationReport.data.length === 0 ? (
               <div className="flex justify-center items-center gap-4">
                 <Image
                   src="/favicon.ico"
@@ -156,7 +90,7 @@ function ReservationTable() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {reservations.data.map((reservation, index) => (
+                  {pendingReservationReport.data.map((reservation, index) => (
                     <TableRow key={index}>
                       <TableCell>{reservation.id}</TableCell>
                       <TableCell className="font-medium">
@@ -235,9 +169,9 @@ function ReservationTable() {
             </div>
           </CardFooter>
         </>
-      )}
+      )} */}
     </Card>
   );
 }
 
-export default ReservationTable;
+export default PendingReservation;

@@ -18,6 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "./ui/button";
+import { Trash } from "lucide-react";
 // import {
 //   Pagination,
 //   PaginationContent,
@@ -26,9 +28,9 @@ import {
 //   PaginationNext,
 //   PaginationPrevious,
 // } from "@/components/ui/pagination";
-import UserCreateDialog from "./UserCreateDialog";
-import UserEditDialog from "./UserEditDialog";
-import UserDeleteDialog from "./UserDeleteDialog";
+// import UserCreateDialog from "./UserCreateDialog";
+// import UserEditDialog from "./UserEditDialog";
+// import UserDeleteDialog from "./UserDeleteDialog"
 import Spinner from "./Spinner";
 
 function UserTable() {
@@ -90,17 +92,25 @@ function UserTable() {
                       </TableCell>
                       <TableCell className="font-medium">{user.name}</TableCell>
                       <TableCell>{user.phone || "XXX-XXX-XXX"}</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          className="bg-red-500 text-white"
+                        >
+                          <Trash className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             )}
           </CardContent>
-          <CardFooter className="flex justify-between items-center">
+          {/* <CardFooter className="flex justify-between items-center">
             <div className="text-xs text-muted-foreground">
-              Showing <strong>1-5</strong> teams
+              Showing <strong>1-5</strong> users
             </div>
-            {/* <div>
+            <div>
               <Pagination>
                 <PaginationContent>
                   {teams.data.meta.links.map((link, index) => (
@@ -140,8 +150,8 @@ function UserTable() {
                   ))}
                 </PaginationContent>
               </Pagination>
-            </div> */}
-          </CardFooter>
+            </div>
+          </CardFooter> */}
         </>
       )}
     </Card>

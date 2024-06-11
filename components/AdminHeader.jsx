@@ -10,7 +10,7 @@ import {
   User,
   LandPlot,
   Menu,
-  Search,
+  ClipboardList,
   Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -83,17 +83,6 @@ function AdminHeader() {
               Reservation
             </Link>
             <Link
-              href="/team"
-              className={
-                pathName === "/team"
-                  ? "mx-[-0.65rem] bg-[#f5f5f5] flex items-center gap-4 rounded-lg px-3 py-2"
-                  : "flex items-center gap-4 rounded-lg py-2 text-gray-400 transition-all hover:text-black"
-              }
-            >
-              <Users className="h-5 w-5" />
-              Team
-            </Link>
-            <Link
               href="/user"
               className={
                 pathName === "/user"
@@ -103,6 +92,17 @@ function AdminHeader() {
             >
               <User className="h-5 w-5" />
               User
+            </Link>
+            <Link
+              href="/report"
+              className={
+                pathName === "/report"
+                  ? "mx-[-0.65rem] bg-[#f5f5f5] flex items-center gap-4 rounded-lg px-3 py-2"
+                  : "flex items-center gap-4 rounded-lg py-2 text-gray-400 transition-all hover:text-black"
+              }
+            >
+              <ClipboardList className="h-5 w-5" />
+              Setting
             </Link>
             <Link
               href="/setting"

@@ -142,13 +142,40 @@ function ReservationEditDialog({ reservation }) {
   };
   const onSubmit = async (e) => {
     e.preventDefault();
+    setCheckTimeMessage("");
+    setCheckDateMessage("");
     if (!isFormValid()) {
       setOpenAlertDialog(true);
       setAlertMessage("Please fill out all fields.");
       wait().then(() => setOpenAlertDialog(false));
       return;
     }
+    if (new Date(inputData.date) < new Date().setHours(0, 0, 0, 0)) {
+      setCheckDateMessage("You can't choose a date before today");
+    }
+    if (
+      new Date(`2000-01-01T${inputData.start_time}`) >=
+      new Date(`2000-01-01T${inputData.end_time}`)
+    ) {
+      setCheckTimeMessage("End time must be after start time.");
+      return;
+    }
     setLoading(true);
+    // const response = await checkAvailableTime({
+    //   date: inputData.date,
+    //   start_time: inputData.start_time,
+    //   end_time: inputData.end_time,
+    //   venue_id: parseInt(inputData?.venue_id),
+    // });
+    // if (response.status !== 422) {
+    //   if (!response.data.is_founded) {
+    //     setLoading(false);
+    //     setOpenAlertDialog(true);
+    //     setAlertMessage("Time already reserved");
+    //     wait().then(() => setOpenAlertDialog(false));
+    //     return;
+    //   }
+    // }
     const res = await updateReservation(reservation, {
       ...inputData,
       ...teamOptions,
@@ -157,6 +184,10 @@ function ReservationEditDialog({ reservation }) {
       setLoading(false);
       setOpenAlertDialog(true);
       setAlertMessage("Reservation Edit Successfully");
+      wait().then(() => setOpenAlertDialog(false));
+    } else if (res.status === 403) {
+      setOpenAlertDialog(true);
+      setAlertMessage("Time already reserved");
       wait().then(() => setOpenAlertDialog(false));
     } else {
       setOpenAlertDialog(true);

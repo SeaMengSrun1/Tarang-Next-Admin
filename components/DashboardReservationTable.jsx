@@ -57,7 +57,7 @@ function DashboardReservationTable() {
           </div>
         ) : (
           <>
-            {reservations.data.data.length === 0 ? (
+            {reservations.data.length === 0 ? (
               <div className="flex justify-center items-center gap-4 mb-6">
                 <Image
                   src="/favicon.ico"
@@ -84,7 +84,7 @@ function DashboardReservationTable() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {reservations.data.data.map((reservation, index) => (
+                  {reservations.data.map((reservation, index) => (
                     <TableRow key={index}>
                       <TableCell>{reservation.id}</TableCell>
                       <TableCell className="font-medium">
