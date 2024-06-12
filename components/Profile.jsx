@@ -10,7 +10,7 @@ import { Button } from "./ui/button";
 function Profile() {
   const { logout } = useAuth();
   const { data: user, isLoading } = useQuery({
-    queryKey: ["user"],
+    queryKey: ["users"],
     queryFn: getUser,
   });
   console.log(user);
