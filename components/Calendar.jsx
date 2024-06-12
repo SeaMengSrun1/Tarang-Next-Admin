@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sheet";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getAllReservations } from "@/services/reservation";
+import { getAllVenues } from "@/services/venue";
 import ReservationCreateDialog from "./ReservationCreateDialog";
 import ReservationCard from "./ReservationCard";
 import Spinner from "./Spinner";
@@ -21,6 +22,10 @@ function Calendar() {
   const { data: reservations, isLoading: reservationsLoading } = useQuery({
     queryKey: ["allReservations"],
     queryFn: getAllReservations,
+  });
+  const { data: venues, isLoading: venuesLoading } = useQuery({
+    queryKey: ["allVenues"],
+    queryFn: getAllVenues,
   });
   const MONTH_NAMES = [
     "January",
@@ -77,7 +82,7 @@ function Calendar() {
   };
   return (
     <Card className="antialiased sans-serif">
-      {reservationsLoading ? (
+      {reservationsLoading || venuesLoading ? (
         <div className="flex justify-center items-center p-12">
           <Spinner />
         </div>
@@ -109,19 +114,7 @@ function Calendar() {
                       getNoOfDays();
                     }}
                   >
-                    <svg
-                      className="h-6 w-6 text-gray-500 inline-flex leading-none"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 19l-7-7 7-7"
-                      />
-                    </svg>
+                    <ChevronLeft className="h-6 w-6" />
                   </button>
                   <div className="border-r inline-flex h-6"></div>
                   <button
@@ -135,19 +128,7 @@ function Calendar() {
                       getNoOfDays();
                     }}
                   >
-                    <svg
-                      className="h-6 w-6 text-gray-500 inline-flex leading-none"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
+                    <ChevronRight className="h-6 w-6" />
                   </button>
                 </div>
               </div>
@@ -187,6 +168,7 @@ function Calendar() {
                       ) : (
                         <>
                           <ReservationCreateDialog
+                            venues={venues}
                             date={new Date(year, month, date)}
                             triggerContent={
                               <div

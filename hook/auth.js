@@ -42,8 +42,8 @@ export const useAuth = ({ middleware } = {}) => {
   const login = async ({ setErrors, setStatus, ...props }) => {
     await csrf();
 
-    setErrors([]);
-    setStatus(null);
+    // setErrors([]);
+    // setStatus(null);
 
     axios
       .post("/login", props)
@@ -51,7 +51,7 @@ export const useAuth = ({ middleware } = {}) => {
       .catch((error) => {
         if (error.response.status !== 422) throw error;
         console.log(error.response);
-        setErrors(error.response.data.errors);
+        // setErrors(error.response.data.errors);
       });
   };
 
@@ -104,8 +104,8 @@ export const useAuth = ({ middleware } = {}) => {
   };
 
   useEffect(() => {
-    if (user && user?.is_admin === 0) router.push("/profile");
-    if (user && user?.is_admin === 1) router.push("/");
+    if (user && user?.is_admin === false) router.push("/profile");
+    if (user && user?.is_admin === true) router.push("/");
     if (middleware === "auth" && error) logout();
   }, [user, error]);
 

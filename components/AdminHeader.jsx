@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import {
   Users,
   LayoutDashboard,
@@ -9,7 +10,7 @@ import {
   User,
   LandPlot,
   Menu,
-  Search,
+  ClipboardList,
   Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 function AdminHeader() {
   // const { logout } = useAuth();
+  const pathName = usePathname();
   return (
     <header className="flex md:hidden h-14 items-center gap-4 border-b bg-muted/40 p-4 md:p-10 lg:h-[60px] bg-white justify-between">
       <Sheet>
@@ -35,59 +37,80 @@ function AdminHeader() {
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="flex flex-col">
-          <nav className="grid gap-2 text-lg font-medium">
+        <SheetContent
+          side="left"
+          className="flex flex-col max-w-[250px] sm:max-w-[250px]"
+        >
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-lg font-semibold mx-auto"
+          >
+            <Image src="/tarang_logo.png" alt="logo" width={150} height={50} />
+            <span className="sr-only">Tarang</span>
+          </Link>
+          <nav className="grid text-lg font-medium">
             <Link
               href="/"
-              className="flex items-center gap-2 text-lg font-semibold"
-            >
-              {/* <Package2 className="h-6 w-6" /> */}
-              <Image
-                src="/tarang_logo.png"
-                alt="logo"
-                width={150}
-                height={50}
-              />
-              <span className="sr-only">Tarang</span>
-            </Link>
-            <Link
-              href="/"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+              className={
+                pathName === "/"
+                  ? "mx-[-0.65rem] bg-[#f5f5f5] flex items-center gap-4 rounded-lg px-3 py-2"
+                  : "flex items-center gap-4 rounded-lg py-2 text-gray-400 transition-all hover:text-black"
+              }
             >
               <LayoutDashboard className="h-5 w-5" />
               Dashboard
             </Link>
             <Link
               href="/venue"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
+              className={
+                pathName === "/venue"
+                  ? "mx-[-0.65rem] bg-[#f5f5f5] flex items-center gap-4 rounded-lg px-3 py-2"
+                  : "flex items-center gap-4 rounded-lg py-2 text-gray-400 transition-all hover:text-black"
+              }
             >
               <LandPlot className="h-5 w-5" />
               Venue
             </Link>
             <Link
               href="/reservation"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+              className={
+                pathName === "/reservation"
+                  ? "mx-[-0.65rem] bg-[#f5f5f5] flex items-center gap-4 rounded-lg px-3 py-2"
+                  : "flex items-center gap-4 rounded-lg py-2 text-gray-400 transition-all hover:text-black"
+              }
             >
               <Bookmark className="h-5 w-5" />
               Reservation
             </Link>
             <Link
-              href="/team"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-            >
-              <Users className="h-5 w-5" />
-              Team
-            </Link>
-            <Link
               href="/user"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+              className={
+                pathName === "/user"
+                  ? "mx-[-0.65rem] bg-[#f5f5f5] flex items-center gap-4 rounded-lg px-3 py-2"
+                  : "flex items-center gap-4 rounded-lg py-2 text-gray-400 transition-all hover:text-black"
+              }
             >
               <User className="h-5 w-5" />
               User
             </Link>
             <Link
+              href="/report"
+              className={
+                pathName === "/report"
+                  ? "mx-[-0.65rem] bg-[#f5f5f5] flex items-center gap-4 rounded-lg px-3 py-2"
+                  : "flex items-center gap-4 rounded-lg py-2 text-gray-400 transition-all hover:text-black"
+              }
+            >
+              <ClipboardList className="h-5 w-5" />
+              Setting
+            </Link>
+            <Link
               href="/setting"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+              className={
+                pathName === "/setting"
+                  ? "mx-[-0.65rem] bg-[#f5f5f5] flex items-center gap-4 rounded-lg px-3 py-2"
+                  : "flex items-center gap-4 rounded-lg py-2 text-gray-400 transition-all hover:text-black"
+              }
             >
               <Settings className="h-5 w-5" />
               Setting

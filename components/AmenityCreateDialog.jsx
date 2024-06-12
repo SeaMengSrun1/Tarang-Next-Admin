@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
-  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
@@ -43,6 +43,12 @@ function AmenityCreateDialog() {
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (inputData.name === "") {
+      setOpenAlertDialog(true);
+      setAlertMessage("Amenity name is required");
+      wait().then(() => setOpenAlertDialog(false));
+      return;
+    }
     setLoading(true);
     const res = await createAmenity(inputData);
     if (res.status === 201) {
@@ -65,7 +71,11 @@ function AmenityCreateDialog() {
             <AlertDialogTitle>{alertMessage}</AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction>Ok</AlertDialogAction>
+            <AlertDialogCancel asChild>
+              <Button className="bg-[#2ad5a5] text-white" variant="outline">
+                Ok
+              </Button>
+            </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -94,7 +104,7 @@ function AmenityCreateDialog() {
               <div className="flex flex-col gap-4 py-4">
                 <div className="flex flex-col gap-4">
                   <Label htmlFor="name">Name</Label>
-                  <Input id="name" onChange={onChange} />
+                  <Input id="name" type="text" onChange={onChange} required />
                 </div>
               </div>
               <DialogFooter>

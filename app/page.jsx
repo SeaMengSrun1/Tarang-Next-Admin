@@ -1,8 +1,8 @@
 import StatisticsCard from "@/components/StatisticsCard";
 import DashboardReservationTable from "@/components/DashboardReservationTable";
-import DashboardTeamTable from "@/components/DashboardTeamTable";
 import AdminLayout from "./AdminLayout";
 import Profile from "@/components/Profile";
+import PendingReservation from "@/components/PendingReservation";
 
 function AdminHomePage() {
   return (
@@ -10,8 +10,9 @@ function AdminHomePage() {
       <StatisticsCard />
       <div className="space-y-4 xl:space-y-10">
         <DashboardReservationTable />
-        <DashboardTeamTable />
-        <Profile />
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:gap-10">
+          <Profile />
+        </div>
       </div>
     </AdminLayout>
   );

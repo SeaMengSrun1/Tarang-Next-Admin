@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
-  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
@@ -43,6 +43,12 @@ function AmenityEditDialog({ amenity }) {
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (updateData.name === amenity.name) {
+      setOpenAlertDialog(true);
+      setAlertMessage("No Change was made");
+      wait().then(() => setOpenAlertDialog(false));
+      return;
+    }
     setLoading(true);
     const res = await editAmenity(amenity, updateData);
     console.log(res);
@@ -66,7 +72,11 @@ function AmenityEditDialog({ amenity }) {
             <AlertDialogTitle>{alertMessage}</AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction>Ok</AlertDialogAction>
+            <AlertDialogCancel asChild>
+              <Button className="bg-[#2ad5a5] text-white" variant="outline">
+                Ok
+              </Button>
+            </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

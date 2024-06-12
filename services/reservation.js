@@ -49,7 +49,7 @@ export const updateReservation = async (reservation, updateReservation) => {
     return res;
   } catch (error) {
     console.log(error);
-    return error.res;
+    return error.response;
   }
 };
 
@@ -88,10 +88,11 @@ export const getReservationWithPagination = async (paginationUrl) => {
         Accept: "application/json",
       },
     });
-    return res;
+    const data = res.data;
+    return data;
   } catch (error) {
     console.log(error);
-    return error.response;
+    return null;
   }
 };
 
@@ -109,6 +110,59 @@ export const getReservationByUser = async (paginationUrl) => {
   }
 };
 
+export const getReservationByType = async (sportId) => {
+  try {
+    sportId = parseInt(sportId);
+    const res = await axios.get(`/api/reservation?type=${sportId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data = res.data;
+    return data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const getReservationByDate = async (date) => {
+  console.log(date);
+  try {
+    date = date.split("T")[0];
+    const res = await axios.get(`/api/reservation?date=${date}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data = res.data;
+    return data;
+  } catch (error) {
+    console.log(error.response);
+    return error.response;
+  }
+};
+
+// export const getReservationByMonth = async (date) => {
+//   try {
+//     date = data.split("T")[0];
+//     sportId = parseInt(sportId);
+//     const res = await axios.get(`/api/reservation?date=${date}`, {
+//       headers: {
+//         "Content-Type": "application/json",
+//         Accept: "application/json",
+//       },
+//     });
+//     const data = res.data;
+//     return data;
+//   } catch (error) {
+//     console.log(error.response);
+//     return error.response;
+//   }
+// };
+
 export const searchAvailableTime = async (data) => {
   try {
     data.date = data.date.split("T")[0];
@@ -125,3 +179,20 @@ export const searchAvailableTime = async (data) => {
     return e.response;
   }
 };
+
+export const checkAvailableTime = async (data) => {
+  try {
+    const res = await axios.post("/api/find-reservation", data, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    return res;
+  } catch (e) {
+    console.log(e.response);
+    return e.response;
+  }
+};
+
+// 85592694905

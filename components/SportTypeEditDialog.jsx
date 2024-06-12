@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
-  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
@@ -43,6 +43,12 @@ function SportTypeEditDialog({ sport }) {
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (updateData.name === sport.name) {
+      setOpenAlertDialog(true);
+      setAlertMessage("No Change was made");
+      wait().then(() => setOpenAlertDialog(false));
+      return;
+    }
     setLoading(true);
     const res = await updateSport(sport, updateData);
     if (res.status === 204) {
@@ -65,7 +71,11 @@ function SportTypeEditDialog({ sport }) {
             <AlertDialogTitle>{alertMessage}</AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction>Ok</AlertDialogAction>
+            <AlertDialogCancel asChild>
+              <Button className="bg-[#2ad5a5] text-white" variant="outline">
+                Ok
+              </Button>
+            </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
