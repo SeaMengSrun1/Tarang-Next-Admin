@@ -104,7 +104,6 @@ export const useAuth = ({ middleware } = {}) => {
   };
 
   useEffect(() => {
-    console.log(user);
     if (user && user?.is_admin === false) router.push("/login");
     if (user && user?.is_admin === true) router.push("/");
     if (middleware === "auth" && error) logout();

@@ -7,6 +7,7 @@ import {
   getReservationWithPagination,
   getReservationByType,
   getReservationByDate,
+  getReservationByTypeAndDate,
 } from "@/services/reservation";
 import { getSportTypes } from "@/services/sport";
 import { format } from "date-fns";
@@ -50,29 +51,58 @@ import Spinner from "./Spinner";
 
 function ReservationTable() {
   const [paginationUrl, setPaginationUrl] = useState("/api/reservation");
-  const [filter, setFilter] = useState({ type: "all", value: "" });
-
+  const [filter, setFilter] = useState({ type: "all", date: "" });
+  const [type, setType] = useState("");
+  const [date, setDate] = useState("");
   const fetchVenues = async () => {
-    switch (filter.type) {
-      case "type":
-        return getReservationByType(filter.value);
-      case "date":
-        return getReservationByDate(
-          new Date(
-            new Date(filter.value).getTime() -
-              new Date(filter.value).getTimezoneOffset() * 60000
-          ).toISOString()
-        );
-      default:
-        return getReservationWithPagination(paginationUrl);
+    if (filter.type === "all") {
+      return getReservationWithPagination(paginationUrl);
     }
+    if (type !== "" && date !== "") {
+      return getReservationByTypeAndDate(
+        type,
+        new Date(
+          new Date(date).getTime() - new Date(date).getTimezoneOffset() * 60000
+        ).toISOString()
+      );
+    } else if (type !== "" && date === "") {
+      return getReservationByType(type);
+    } else if (type === "" && date !== "") {
+      return getReservationByDate(
+        new Date(
+          new Date(date).getTime() - new Date(date).getTimezoneOffset() * 60000
+        ).toISOString()
+      );
+    } else {
+      return getReservationWithPagination(paginationUrl);
+    }
+    // switch (filter.type) {
+    //   case "type":
+    //     return getReservationByType(filter.value);
+    //   case "date":
+    // return getReservationByDate(
+    //   new Date(
+    //     new Date(filter.value).getTime() -
+    //       new Date(filter.value).getTimezoneOffset() * 60000
+    //   ).toISOString()
+    // );
+    //   // case "combined":
+    // return getReservationByTypeAndDate(
+    //   combinedFilter.type,
+    //   new Date(
+    //     new Date(combinedFilter.date).getTime() -
+    //       new Date(combinedFilter.date).getTimezoneOffset() * 60000
+    //   ).toISOString()
+    // );
+    //   default:
+    //     return getReservationWithPagination(paginationUrl);
   };
   const {
     data: reservations,
     isLoading,
     refetch: refetchReservations,
   } = useQuery({
-    queryKey: ["reservations", paginationUrl, filter],
+    queryKey: ["reservations", paginationUrl, date, type],
     queryFn: fetchVenues,
   });
   const { data: sportTypes, isLoading: sportTypesLoading } = useQuery({
@@ -83,8 +113,8 @@ function ReservationTable() {
     setPaginationUrl(url);
     setFilter({ type: "all", value: "" });
   };
-  const handleFilterChange = (type, value) => {
-    setFilter({ type, value });
+  const handleFilterChange = (type, date) => {
+    setFilter({ type, date });
   };
   const [refresh, setRefresh] = useState(false);
   useEffect(() => {
@@ -104,7 +134,12 @@ function ReservationTable() {
             </button>
           </div>
           <div className="flex gap-4">
-            <Select onValueChange={(id) => handleFilterChange("type", id)}>
+            <Select
+              onValueChange={(id) => {
+                handleFilterChange(id, "");
+                setType(id);
+              }}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="View by type" />
               </SelectTrigger>
@@ -129,7 +164,10 @@ function ReservationTable() {
               </SelectContent>
             </Select>
             <DatePicker
-              onDateChange={(date) => handleFilterChange("date", date)}
+              onDateChange={(date) => {
+                handleFilterChange("", date);
+                setDate(date);
+              }}
             />
           </div>
         </div>

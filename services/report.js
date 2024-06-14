@@ -41,3 +41,21 @@ export const getPendingReservation = async () => {
     return error.response;
   }
 };
+
+export const getReservationReportByPeirod = async (period) => {
+  try {
+    const response = await axios.post(
+      "/api/reservation/custom-report",
+      { start_date: period.from, end_time: period.to },
+      {
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error(error.response);
+    return error.response;
+  }
+};

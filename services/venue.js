@@ -98,6 +98,24 @@ export const getVenuesByAmenity = async (amenity) => {
   }
 };
 
+export const getVenuesByTypeAndAmenity = async (type, amenity) => {
+  try {
+    type = parseInt(type);
+    amenity = parseInt(amenity);
+    const res = await axios.get(`/api/venues?type=${type}&amenity=${amenity}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data = res.data;
+    return data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
 export const showSingleVenue = async (venueId) => {
   try {
     const res = await axios.get(`/api/venues/${venueId}`, {

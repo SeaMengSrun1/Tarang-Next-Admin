@@ -47,19 +47,33 @@ import VenueCreateDialog from "./VenueCreateDialog";
 import VenueEditDialog from "./VenueEditDialog";
 import VenueDeleteDialog from "./VenueDeleteDialog";
 import { RefreshCcw } from "lucide-react";
+import { getVenuesByTypeAndAmenity } from "@/services/venue";
 
 function VenueTable() {
   const [paginationUrl, setPaginationUrl] = useState("/api/venues");
   const [filter, setFilter] = useState({ type: "all", value: "" });
-
+  const [type, setType] = useState("");
+  const [amenity, setamenity] = useState("");
   const fetchVenues = async () => {
-    switch (filter.type) {
-      case "type":
-        return getVenuesByType(filter.value);
-      case "amenity":
-        return getVenuesByAmenity(filter.value);
-      default:
-        return getVenuesWithPagination(paginationUrl);
+    // switch (filter.type) {
+    //   case "type":
+    //     return getVenuesByType(filter.value);
+    //   case "amenity":
+    //     return getVenuesByAmenity(filter.value);
+    //   default:
+    //     return getVenuesWithPagination(paginationUrl);
+    // }
+    if (filter.type === "all") {
+      return getVenuesWithPagination(paginationUrl);
+    }
+    if (type !== "" && amenity !== "") {
+      return getVenuesByTypeAndAmenity(type, amenity);
+    } else if (type !== "" && amenity === "") {
+      return getVenuesByType(type);
+    } else if (type === "" && amenity !== "") {
+      return getVenuesByAmenity(amenity);
+    } else {
+      return getVenuesWithPagination(paginationUrl);
     }
   };
   const { data: amenities, isLoading: amenitiesLoading } = useQuery({
@@ -75,7 +89,7 @@ function VenueTable() {
     isLoading,
     refetch: refetchVenues,
   } = useQuery({
-    queryKey: ["venues", paginationUrl, filter],
+    queryKey: ["venues", paginationUrl, type, amenity],
     queryFn: fetchVenues,
   });
   const handlePaginationChange = (url) => {
@@ -103,7 +117,12 @@ function VenueTable() {
             </button>
           </div>
           <div className="flex gap-4">
-            <Select onValueChange={(id) => handleFilterChange("type", id)}>
+            <Select
+              onValueChange={(id) => {
+                handleFilterChange("type", id);
+                setType(id);
+              }}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="View by type" />
               </SelectTrigger>
@@ -127,7 +146,12 @@ function VenueTable() {
                 )}
               </SelectContent>
             </Select>
-            <Select onValueChange={(id) => handleFilterChange("amenity", id)}>
+            <Select
+              onValueChange={(id) => {
+                handleFilterChange("amenity", id);
+                setamenity(id);
+              }}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="View by amenity" />
               </SelectTrigger>

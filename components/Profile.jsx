@@ -13,7 +13,6 @@ function Profile() {
     queryKey: ["users"],
     queryFn: getUser,
   });
-  console.log(user);
   return (
     <Card>
       <CardHeader>
