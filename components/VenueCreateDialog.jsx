@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getAmenities } from "@/services/amenity";
 import { getSportTypes } from "@/services/sport";
@@ -56,6 +56,7 @@ function VenueCreateDialog() {
     amenity_id: [],
     photo: "",
   });
+  const [imgUrl, setImgUrl] = useState("");
   const onChange = (e) => {
     e.preventDefault();
     if (e.target.id === "photo") {
@@ -63,6 +64,8 @@ function VenueCreateDialog() {
         ...prevState,
         [e.target.id]: e.target.files[0],
       }));
+      const fileUrl = URL.createObjectURL(e.target.files[0]);
+      setImgUrl(fileUrl);
     } else {
       setInputData((prevState) => ({
         ...prevState,
@@ -241,15 +244,22 @@ function VenueCreateDialog() {
                       onChange={onChange}
                       required
                     />
+                    <img
+                      alt="venue_image"
+                      src={imgUrl || "/logo_latin.png"}
+                      width={100}
+                      height={50}
+                    />
                   </div>
                 </div>
                 <DialogFooter>
                   <Button
                     type="submit"
                     variant="outline"
-                    className="bg-[#2ad5a5] hover:bg-[#9c87f2] text-white hover:text-white"
+                    className="bg-[#2ad5a5] text-white"
+                    disabled={!isFormValid()}
                   >
-                    Save
+                    Create
                   </Button>
                 </DialogFooter>
               </>

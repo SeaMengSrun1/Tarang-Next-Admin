@@ -70,7 +70,6 @@ function ReservationTable() {
     queryKey: ["reservations", paginationUrl, filter],
     queryFn: fetchVenues,
   });
-  console.log(reservations);
   const { data: sportTypes, isLoading: sportTypesLoading } = useQuery({
     queryKey: ["allSportTypes"],
     queryFn: getSportTypes,

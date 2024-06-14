@@ -11,9 +11,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getAllReservations } from "@/services/reservation";
 import { getAllVenues } from "@/services/venue";
+import { getSportTypes } from "@/services/sport";
 import ReservationCreateDialog from "./ReservationCreateDialog";
 import ReservationCard from "./ReservationCard";
 import Spinner from "./Spinner";
@@ -26,6 +34,10 @@ function Calendar() {
   const { data: venues, isLoading: venuesLoading } = useQuery({
     queryKey: ["allVenues"],
     queryFn: getAllVenues,
+  });
+  const { data: sportTypes, isLoading: sportTypesLoading } = useQuery({
+    queryKey: ["allSportTypes"],
+    queryFn: getSportTypes,
   });
   const MONTH_NAMES = [
     "January",
@@ -80,9 +92,10 @@ function Calendar() {
     setBlankDays(blankDaysArray);
     setNoOfDays(daysArray);
   };
+  const [filter, setFilter] = useState("");
   return (
     <Card className="antialiased sans-serif">
-      {reservationsLoading || venuesLoading ? (
+      {reservationsLoading || venuesLoading || sportTypesLoading ? (
         <div className="flex justify-center items-center p-12">
           <Spinner />
         </div>
@@ -208,41 +221,128 @@ function Calendar() {
                           </SheetTrigger>
                           <SheetContent className="flex flex-col gap-4 max-w-[400px] sm:max-w-[540px]">
                             <SheetHeader>
-                              <SheetTitle>Reservations</SheetTitle>
+                              <div className="flex justify-between items-center">
+                                <SheetTitle>Reservations</SheetTitle>
+                                <Select onValueChange={(id) => setFilter(id)}>
+                                  <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="View by type" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {sportTypesLoading ? (
+                                      <div className="flex justify-center py-4">
+                                        <Spinner />
+                                      </div>
+                                    ) : (
+                                      <>
+                                        {sportTypes.sport_types.map((sport) => (
+                                          <SelectItem
+                                            key={sport.id}
+                                            id={sport.id}
+                                            value={sport.id.toString()}
+                                          >
+                                            {sport.name}
+                                          </SelectItem>
+                                        ))}
+                                      </>
+                                    )}
+                                  </SelectContent>
+                                </Select>
+                              </div>
                             </SheetHeader>
-                            {reservations.filter(
-                              (reservation) =>
-                                new Date(reservation.date).toDateString() ===
-                                new Date(year, month, date).toDateString()
-                            ).length === 0 ? (
-                              <div className="h-full flex justify-center items-center gap-4">
-                                <Image
-                                  src="/favicon.ico"
-                                  width={32}
-                                  height={32}
-                                  alt="tarang_icon"
-                                />
-                                <h1 className="text-2xl font-semibold">
-                                  No Reservations
-                                </h1>
-                              </div>
-                            ) : (
-                              <div className="flex flex-col gap-6 overflow-y-auto h-full">
-                                {reservations
-                                  .filter(
-                                    (reservation) =>
-                                      new Date(
-                                        reservation.date
-                                      ).toDateString() ===
-                                      new Date(year, month, date).toDateString()
-                                  )
-                                  .map((reservation, index) => (
-                                    <ReservationCard
-                                      key={index}
-                                      reservation={reservation}
+                            {filter === "" ? (
+                              <>
+                                {reservations.filter(
+                                  (reservation) =>
+                                    new Date(
+                                      reservation.date
+                                    ).toDateString() ===
+                                    new Date(year, month, date).toDateString()
+                                ).length === 0 ? (
+                                  <div className="h-full flex justify-center items-center gap-4">
+                                    <Image
+                                      src="/favicon.ico"
+                                      width={32}
+                                      height={32}
+                                      alt="tarang_icon"
                                     />
-                                  ))}
-                              </div>
+                                    <h1 className="text-2xl font-semibold">
+                                      No Reservations
+                                    </h1>
+                                  </div>
+                                ) : (
+                                  <div className="flex flex-col gap-6 overflow-y-auto h-full">
+                                    {reservations
+                                      .filter(
+                                        (reservation) =>
+                                          new Date(
+                                            reservation.date
+                                          ).toDateString() ===
+                                          new Date(
+                                            year,
+                                            month,
+                                            date
+                                          ).toDateString()
+                                      )
+                                      .map((reservation, index) => (
+                                        <ReservationCard
+                                          key={index}
+                                          reservation={reservation}
+                                        />
+                                      ))}
+                                  </div>
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                {reservations.filter(
+                                  (reservation) =>
+                                    new Date(
+                                      reservation.date
+                                    ).toDateString() ===
+                                      new Date(
+                                        year,
+                                        month,
+                                        date
+                                      ).toDateString() &&
+                                    reservation.sport_type.id ===
+                                      parseInt(filter)
+                                ).length === 0 ? (
+                                  <div className="h-full flex justify-center items-center gap-4">
+                                    <Image
+                                      src="/favicon.ico"
+                                      width={32}
+                                      height={32}
+                                      alt="tarang_icon"
+                                    />
+                                    <h1 className="text-2xl font-semibold">
+                                      No Reservations
+                                    </h1>
+                                  </div>
+                                ) : (
+                                  <div className="flex flex-col gap-6 overflow-y-auto h-full">
+                                    {reservations
+                                      .filter(
+                                        (reservation) =>
+                                          new Date(
+                                            reservation.date
+                                          ).toDateString() ===
+                                            new Date(
+                                              year,
+                                              month,
+                                              date
+                                            ).toDateString() &&
+                                          reservation.sport_type.id ===
+                                            parseInt(filter)
+                                      )
+                                      .map((reservation, index) => (
+                                        <ReservationCard
+                                          key={index}
+                                          reservation={reservation}
+                                        />
+                                      ))}
+                                  </div>
+                                )}
+                              </>
                             )}
                           </SheetContent>
                         </Sheet>

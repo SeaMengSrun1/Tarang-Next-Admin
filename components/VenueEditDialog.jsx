@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useToast } from "./ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { getAmenities } from "@/services/amenity";
 import { getSportTypes } from "@/services/sport";
@@ -59,6 +60,7 @@ function VenueEditDialog({ venue }) {
     amenity_id: venue ? venueAmenitiesIds : [],
     photo: venue ? venue.photo : "",
   });
+  const [imgUrl, setImgUrl] = useState("");
   const onChange = (e) => {
     e.preventDefault();
     if (e.target.id === "photo") {
@@ -66,6 +68,8 @@ function VenueEditDialog({ venue }) {
         ...prevState,
         [e.target.id]: e.target.files[0],
       }));
+      const fileUrl = URL.createObjectURL(e.target.files[0]);
+      setImgUrl(fileUrl);
     } else {
       setUpdateData((prevState) => ({
         ...prevState,
@@ -93,6 +97,28 @@ function VenueEditDialog({ venue }) {
   const [alertMessage, setAlertMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
+  const isFormValid = () => {
+    return (
+      updateData.name === venue.name &&
+      updateData.size === venue.size &&
+      updateData.sport_type_id === venue.sport_type.id &&
+      updateData.description === venue.description &&
+      updateData.photo === venue.photo &&
+      JSON.stringify(updateData.amenity_id) ===
+        JSON.stringify(venueAmenitiesIds)
+    );
+  };
+  const [openToast, setOpenToast] = useState(false);
+  const [message, setMessage] = useState("");
+  const { toast } = useToast();
+  useEffect(() => {
+    if (openToast) {
+      toast({
+        variant: "destructive",
+        description: message,
+      });
+    }
+  }, [openToast, toast, message]);
   const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -101,6 +127,7 @@ function VenueEditDialog({ venue }) {
       updateData.size === venue.size &&
       updateData.sport_type_id === venue.sport_type.id &&
       updateData.description === venue.description &&
+      updateData.photo === venue.photo &&
       JSON.stringify(updateData.amenity_id) ===
         JSON.stringify(venueAmenitiesIds)
     ) {
@@ -246,6 +273,12 @@ function VenueEditDialog({ venue }) {
                   <div className="flex flex-col gap-4">
                     <Label htmlFor="size">Image</Label>
                     <Input type="file" id="photo" onChange={onChange} />
+                    <img
+                      alt="venue_image"
+                      src={imgUrl ? imgUrl : updateData.photo}
+                      width={100}
+                      height={50}
+                    />
                   </div>
                 </div>
                 <DialogFooter>
@@ -253,6 +286,7 @@ function VenueEditDialog({ venue }) {
                     type="submit"
                     variant="outline"
                     className="bg-blue-500 hover:bg-blue-700 text-white hover:text-white"
+                    disabled={isFormValid()}
                   >
                     Save changes
                   </Button>

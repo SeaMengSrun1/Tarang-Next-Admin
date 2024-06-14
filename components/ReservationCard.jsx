@@ -1,10 +1,19 @@
 "use client";
 
 import { format } from "date-fns";
-import { MapPin, Clock, Users, CheckCircle } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { MapPin, Clock, Users, CheckCircle, Phone } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "./ui/card";
+import ReservationDeleteDialog from "./ReservationDeleteDialog";
+import ReservationEditDialog from "./ReservationEditDialog";
 
 function ReservationCard({ reservation }) {
+  console.log(reservation);
   return (
     <Card className="bg-white rounded-xl">
       <CardHeader>
@@ -33,23 +42,24 @@ function ReservationCard({ reservation }) {
               <Users className="w-4 h-4" />
               Player: {reservation.attendee}
             </p>
-          </div>
-          <div className="w-full md:w-1/2 flex flex-col gap-4 text-left">
             {reservation.find_team === 1 && (
               <p className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4" />
                 Available for a match
               </p>
             )}
-            {reservation.find_member === 1 && (
-              <p className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4" />
-                Accepting new members
-              </p>
-            )}
+            <p className="flex items-center gap-2">
+              <Phone className="w-4 h-4" /> {reservation.phone}
+            </p>
           </div>
         </div>
       </CardContent>
+      <CardFooter>
+        <div className="space-x-2 ml-auto">
+          <ReservationEditDialog reservation={reservation} />
+          <ReservationDeleteDialog reservationId={reservation.id} />
+        </div>
+      </CardFooter>
     </Card>
   );
 }

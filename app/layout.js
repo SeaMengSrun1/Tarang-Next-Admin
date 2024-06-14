@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ReactQueryProvider from "@/lib/Providers/ReactQueryProvider";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +18,7 @@ export default function RootLayout({ children }) {
         <ReactQueryProvider>
           <ProtectedRoute>{children}</ProtectedRoute>
         </ReactQueryProvider>
+        <Toaster />
       </body>
     </html>
   );

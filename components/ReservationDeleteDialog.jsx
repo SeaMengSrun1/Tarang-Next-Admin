@@ -33,7 +33,7 @@ function ReservationDeleteDialog({ reservationId }) {
       wait().then(() => setOpenAlertDialog(false));
     } else {
       setOpenAlertDialog(true);
-      setAlertMessage("Reservation Delete Failed");
+      setAlertMessage(res.data.message + " to match day.");
       wait().then(() => setOpenAlertDialog(false));
     }
     setOpen(false);

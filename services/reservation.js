@@ -63,7 +63,7 @@ export const deleteReservation = async (reservationId) => {
     return res;
   } catch (error) {
     console.log(error);
-    return error.res;
+    return error.response;
   }
 };
 
