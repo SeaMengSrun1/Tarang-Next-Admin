@@ -13,7 +13,6 @@ import ReservationDeleteDialog from "./ReservationDeleteDialog";
 import ReservationEditDialog from "./ReservationEditDialog";
 
 function ReservationCard({ reservation }) {
-  console.log(reservation);
   return (
     <Card className="bg-white rounded-xl">
       <CardHeader>
@@ -55,7 +54,7 @@ function ReservationCard({ reservation }) {
         </div>
       </CardContent>
       <CardFooter>
-        <div className="space-x-2 ml-auto">
+        <div className="ml-auto">
           <ReservationEditDialog reservation={reservation} />
           <ReservationDeleteDialog reservationId={reservation.id} />
         </div>

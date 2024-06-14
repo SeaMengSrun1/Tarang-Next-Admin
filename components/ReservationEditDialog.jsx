@@ -79,42 +79,39 @@ function ReservationEditDialog({ reservation }) {
   const [checkDateMessage, setCheckDateMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
-  // useEffect(
-  //   () => {
-  //     setCheckTimeMessage("");
-  //     setCheckDateMessage("");
-  //     if (new Date(inputData.date) < new Date().setHours(0, 0, 0, 0)) {
-  //       setCheckDateMessage("You can't choose a date before today");
-  //     }
-  //     if (
-  //       new Date(`2000-01-01T${inputData.start_time}`) >=
-  //       new Date(`2000-01-01T${inputData.end_time}`)
-  //     ) {
-  //       setCheckTimeMessage("End time must be after start time.");
-  //       return;
-  //     }
-  //     const checkTime = async () => {
-  //       const response = await checkAvailableTime({
-  //         date: inputData.date,
-  //         start_time: inputData.start_time,
-  //         end_time: inputData.end_time,
-  //         venue_id: parseInt(inputData.venue_id),
-  //       });
-  //       if (response.status !== 422) {
-  //         if (!response.data.is_founded) {
-  //           setCheckTimeMessage("Time already reserved");
-  //         }
-  //       }
-  //     };
-  //     checkTime();
-  //   },
-  //   [
-  //     // inputData.start_time,
-  //     // inputData.end_time,
-  //     // inputData.date,
-  //     // inputData.venue_id,
-  //   ]
-  // );
+  useEffect(() => {
+    setCheckTimeMessage("");
+    setCheckDateMessage("");
+    if (new Date(inputData.date) < new Date().setHours(0, 0, 0, 0)) {
+      setCheckDateMessage("You can't choose a date before today");
+    }
+    if (
+      new Date(`2000-01-01T${inputData.start_time}`) >=
+      new Date(`2000-01-01T${inputData.end_time}`)
+    ) {
+      setCheckTimeMessage("End time must be after start time.");
+      return;
+    }
+    const checkTime = async () => {
+      const response = await checkAvailableTime({
+        date: inputData.date,
+        start_time: inputData.start_time,
+        end_time: inputData.end_time,
+        venue_id: parseInt(inputData.venue_id),
+      });
+      if (response.status !== 422) {
+        if (!response.data.is_founded) {
+          setCheckTimeMessage("Time already reserved");
+        }
+      }
+    };
+    checkTime();
+  }, [
+    inputData.start_time,
+    inputData.end_time,
+    inputData.date,
+    inputData.venue_id,
+  ]);
   const validateEditChange = () => {
     if (
       inputData.phone === reservation.phone &&
@@ -161,21 +158,6 @@ function ReservationEditDialog({ reservation }) {
       return;
     }
     setLoading(true);
-    // const response = await checkAvailableTime({
-    //   date: inputData.date,
-    //   start_time: inputData.start_time,
-    //   end_time: inputData.end_time,
-    //   venue_id: parseInt(inputData?.venue_id),
-    // });
-    // if (response.status !== 422) {
-    //   if (!response.data.is_founded) {
-    //     setLoading(false);
-    //     setOpenAlertDialog(true);
-    //     setAlertMessage("Time already reserved");
-    //     wait().then(() => setOpenAlertDialog(false));
-    //     return;
-    //   }
-    // }
     const res = await updateReservation(reservation, {
       ...inputData,
       ...teamOptions,
