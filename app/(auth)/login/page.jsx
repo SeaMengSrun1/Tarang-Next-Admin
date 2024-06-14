@@ -94,25 +94,6 @@ function LoginPage() {
           >
             Sign In
           </Button>
-          <p>Or Sign In With </p>
-          <div className="flex w-full justify-center gap-10">
-            <a href="#">
-              <Image
-                src="/facebook.png"
-                alt="facebook_logo"
-                width={30}
-                height={30}
-              />
-            </a>
-            <a href="https://api.tarang.site/auth/google/redirect">
-              <Image
-                src="/google.png"
-                alt="google_logo"
-                width={30}
-                height={30}
-              />
-            </a>
-          </div>
         </CardFooter>
       </Card>
     </section>

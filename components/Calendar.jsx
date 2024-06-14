@@ -18,7 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "./ui/button";
+import { ChevronLeft, ChevronRight, RefreshCcw } from "lucide-react";
 import { getAllReservations } from "@/services/reservation";
 import { getAllVenues } from "@/services/venue";
 import { getSportTypes } from "@/services/sport";
@@ -27,7 +28,11 @@ import ReservationCard from "./ReservationCard";
 import Spinner from "./Spinner";
 
 function Calendar() {
-  const { data: reservations, isLoading: reservationsLoading } = useQuery({
+  const {
+    data: reservations,
+    isLoading: reservationsLoading,
+    refetch: refetchReservations,
+  } = useQuery({
     queryKey: ["allReservations"],
     queryFn: getAllReservations,
   });
@@ -93,6 +98,10 @@ function Calendar() {
     setNoOfDays(daysArray);
   };
   const [filter, setFilter] = useState("");
+  const [refresh, setRefresh] = useState(false);
+  useEffect(() => {
+    refetchReservations();
+  }, [refresh]);
   return (
     <Card className="antialiased sans-serif">
       {reservationsLoading || venuesLoading || sportTypesLoading ? (
@@ -104,13 +113,18 @@ function Calendar() {
           <div>
             <div className="bg-white rounded-lg overflow-hidden shadow-sm">
               <div className="flex items-center justify-between py-2 px-6">
-                <div>
-                  <span className="text-lg font-bold text-gray-800">
-                    {MONTH_NAMES[month]}
-                  </span>
-                  <span className="ml-1 text-lg text-gray-600 font-normal">
-                    {year}
-                  </span>
+                <div className="flex items-center gap-4">
+                  <div>
+                    <span className="text-lg font-bold text-gray-800">
+                      {MONTH_NAMES[month]}
+                    </span>
+                    <span className="ml-1 text-lg text-gray-600 font-normal">
+                      {year}
+                    </span>
+                  </div>
+                  <button onClick={() => setRefresh(!refresh)}>
+                    <RefreshCcw className="w-4 h-4" />
+                  </button>
                 </div>
                 <div
                   className="border rounded-lg px-1"

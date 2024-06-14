@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   getVenuesByType,
@@ -46,6 +46,7 @@ import Spinner from "./Spinner";
 import VenueCreateDialog from "./VenueCreateDialog";
 import VenueEditDialog from "./VenueEditDialog";
 import VenueDeleteDialog from "./VenueDeleteDialog";
+import { RefreshCcw } from "lucide-react";
 
 function VenueTable() {
   const [paginationUrl, setPaginationUrl] = useState("/api/venues");
@@ -69,7 +70,11 @@ function VenueTable() {
     queryKey: ["allSportTypes"],
     queryFn: getSportTypes,
   });
-  const { data: venues, isLoading } = useQuery({
+  const {
+    data: venues,
+    isLoading,
+    refetch: refetchVenues,
+  } = useQuery({
     queryKey: ["venues", paginationUrl, filter],
     queryFn: fetchVenues,
   });
@@ -80,14 +85,22 @@ function VenueTable() {
   const handleFilterChange = (type, value) => {
     setFilter({ type, value });
   };
-
+  const [refresh, setRefresh] = useState(false);
+  useEffect(() => {
+    refetchVenues();
+  }, [refresh]);
   return (
     <Card className="bg-white rounded-xl">
       <CardHeader className="flex justify-between">
         <div className="flex justify-between">
-          <div>
-            <CardTitle>Venues</CardTitle>
-            <CardDescription>Manage Venue</CardDescription>
+          <div className="flex items-center gap-4">
+            <div>
+              <CardTitle>Venues</CardTitle>
+              <CardDescription>Manage Venue</CardDescription>
+            </div>
+            <button onClick={() => setRefresh(!refresh)}>
+              <RefreshCcw className="w-4 h-4" />
+            </button>
           </div>
           <div className="flex gap-4">
             <Select onValueChange={(id) => handleFilterChange("type", id)}>

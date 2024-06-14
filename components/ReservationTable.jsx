@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   getReservationWithPagination,
@@ -42,6 +42,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RefreshCcw } from "lucide-react";
 import DatePicker from "./DatePicker";
 import ReservationEditDialog from "./ReservationEditDialog";
 import ReservationDeleteDialog from "./ReservationDeleteDialog";
@@ -66,7 +67,11 @@ function ReservationTable() {
         return getReservationWithPagination(paginationUrl);
     }
   };
-  const { data: reservations, isLoading } = useQuery({
+  const {
+    data: reservations,
+    isLoading,
+    refetch: refetchReservations,
+  } = useQuery({
     queryKey: ["reservations", paginationUrl, filter],
     queryFn: fetchVenues,
   });
@@ -81,13 +86,22 @@ function ReservationTable() {
   const handleFilterChange = (type, value) => {
     setFilter({ type, value });
   };
+  const [refresh, setRefresh] = useState(false);
+  useEffect(() => {
+    refetchReservations();
+  }, [refresh]);
   return (
     <Card className="bg-white rounded-xl">
       <CardHeader>
         <div className="flex justify-between">
-          <div>
-            <CardTitle>Reservations</CardTitle>
-            <CardDescription>Manage your Reservations.</CardDescription>
+          <div className="flex items-center gap-4">
+            <div>
+              <CardTitle>Reservations</CardTitle>
+              <CardDescription>Manage your Reservations.</CardDescription>
+            </div>
+            <button onClick={() => setRefresh(!refresh)}>
+              <RefreshCcw className="w-4 h-4" />
+            </button>
           </div>
           <div className="flex gap-4">
             <Select onValueChange={(id) => handleFilterChange("type", id)}>
