@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { LandPlot, Users, Bookmark, Activity } from "lucide-react";
+import { LandPlot, Users, Bookmark, Activity, Search } from "lucide-react";
 import { addDays, format, startOfMonth, endOfMonth, formatISO } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
@@ -25,35 +25,23 @@ import {
 } from "@/services/report";
 import Spinner from "./Spinner";
 
-function formatDateToCustomFormat(dateString) {
-  const date = new Date(dateString);
-
-  const year = date.getUTCFullYear();
-  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(date.getUTCDate()).padStart(2, "0");
-  const hours = String(date.getUTCHours()).padStart(2, "0");
-  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
-  const seconds = String(date.getUTCSeconds()).padStart(2, "0");
-  const milliseconds = String(date.getUTCMilliseconds()).padStart(3, "0");
-
-  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
-}
-
 function StatisticsCard() {
   const now = new Date();
   const [date, setDate] = useState({
-    from: formatDateToCustomFormat(formatISO(startOfMonth(now))),
-    to: formatDateToCustomFormat(formatISO(endOfMonth(now))),
+    from: new Date(now.getFullYear(), now.getMonth(), 1),
+    to: new Date(now.getFullYear(), now.getMonth() + 1, 0),
   });
-  console.log(date);
+  const [period, setPeriod] = useState({
+    from: "",
+    to: "",
+  });
   const {
     data: reservationReportByPeirod,
     isLoading: reservationReportByPeirodLoading,
   } = useQuery({
-    queryKey: ["reservationReportByPeirod", date],
+    queryKey: ["reservationReportByPeirod", period],
     queryFn: () => getReservationReportByPeirod(date),
   });
-  console.log(reservationReportByPeirod);
   const { data: users, isLoading: usersLoading } = useQuery({
     queryKey: ["allUsers"],
     queryFn: getAllUsers,
@@ -73,7 +61,12 @@ function StatisticsCard() {
     queryKey: ["pendingReservation"],
     queryFn: getPendingReservation,
   });
-  const onChange = (e) => {};
+  const handleStartDateEndDate = async () => {
+    setPeriod({
+      from: date.from,
+      to: date.to,
+    });
+  };
   return (
     <div className="grid gap-4 xl:gap-10 md:grid-cols-2 xl:grid-cols-4">
       <Card className="bg-white rounded-xl">
@@ -165,14 +158,13 @@ function StatisticsCard() {
               <CardTitle className="text-sm font-medium">
                 Total Reservation by Period
               </CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="flex justify-between items-center">
                 <div className="text-2xl font-bold">
                   {reservationReportByPeirod.data.count}
                 </div>
-                <div>
+                <div className="flex gap-2">
                   <div className={cn("grid gap-2")}>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -211,6 +203,13 @@ function StatisticsCard() {
                       </PopoverContent>
                     </Popover>
                   </div>
+                  <Button
+                    variant="outline"
+                    className="bg-[#2ad5a5] text-white"
+                    onClick={handleStartDateEndDate}
+                  >
+                    <Search className="w-4 h-4" />
+                  </Button>
                 </div>
               </div>
             </CardContent>
